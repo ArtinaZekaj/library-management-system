@@ -54,4 +54,19 @@ return [
             __DIR__ . '/../view',
         ],
     ],
+    'doctrine' => [
+        'driver' => [
+            'application_entities' => [
+                'class' => \Doctrine\ORM\Mapping\Driver\AttributeDriver::class,
+                'paths' => [
+                    __DIR__ . '/../src/Entity',
+                ],
+            ],
+            'orm_default' => [
+                'drivers' => [
+                    'Application\Entity' => 'application_entities',
+                ],
+            ],
+        ],
+    ],
 ];
