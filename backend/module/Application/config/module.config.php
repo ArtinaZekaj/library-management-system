@@ -15,6 +15,7 @@ use Application\Service\AuthorizationService;
 use Application\Factory\AuthorizationServiceFactory;
 use Application\Controller\BookController;
 use Application\Factory\BookControllerFactory;
+use Laminas\Router\Http\Method;
 
 return [
     'router' => [
@@ -76,6 +77,16 @@ return [
                     'defaults' => [
                         'controller' => BookController::class,
                         'action' => 'index',
+                    ],
+                ],
+            ],
+            'api-book-detail' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/api/books/:id',
+                    'defaults' => [
+                        'controller' => BookController::class,
+                        'action' => 'view',
                     ],
                 ],
             ],
