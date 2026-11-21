@@ -13,5 +13,13 @@
  */
 
 return [
-    // ...
+    'session_config' => [
+        'cookie_httponly' => true,
+        'cookie_samesite' => 'Lax',
+        'cookie_lifetime' => 0,
+        'use_cookies' => true,
+    ],
+    'session_storage' => [
+        'type' => \Laminas\Session\Storage\SessionArrayStorage::class,
+    ],
 ];

@@ -7,6 +7,14 @@ namespace Application;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
 use Laminas\ServiceManager\Factory\InvokableFactory;
+use Application\Factory\UserServiceFactory;
+use Application\Service\UserService;
+use Application\Factory\AuthControllerFactory;
+use Application\Service\RbacService;
+use Application\Service\AuthorizationService;
+use Application\Factory\AuthorizationServiceFactory;
+use Application\Controller\BookController;
+use Application\Factory\BookControllerFactory;
 
 return [
     'router' => [
@@ -31,11 +39,60 @@ return [
                     ],
                 ],
             ],
+            'api-login' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/api/login',
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action' => 'login',
+                    ],
+                ],
+            ],
+            'api-me' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/api/me',
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action' => 'me',
+                    ],
+                ],
+            ],
+            'api-logout' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/api/logout',
+                    'defaults' => [
+                        'controller' => Controller\AuthController::class,
+                        'action' => 'logout',
+                    ],
+                ],
+            ],
+            'api-books' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/api/books',
+                    'defaults' => [
+                        'controller' => BookController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
         'factories' => [
             Controller\IndexController::class => InvokableFactory::class,
+            Controller\AuthController::class => AuthControllerFactory::class,
+            BookController::class => BookControllerFactory::class,
+        ],
+    ],
+    'service_manager' => [
+        'factories' => [
+            UserService::class => UserServiceFactory::class,
+            RbacService::class => InvokableFactory::class,
+            AuthorizationService::class => AuthorizationServiceFactory::class,
         ],
     ],
     'view_manager' => [
@@ -52,6 +109,9 @@ return [
         ],
         'template_path_stack' => [
             __DIR__ . '/../view',
+        ],
+        'strategies' => [
+            'ViewJsonStrategy',
         ],
     ],
     'doctrine' => [

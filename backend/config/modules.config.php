@@ -6,6 +6,7 @@
  * This should be an array of module namespaces used in the application.
  */
 return [
+    'Laminas\Session',
     'Laminas\Cache',
     'Laminas\Form',
     'Laminas\Hydrator',
@@ -17,5 +18,6 @@ return [
     'Laminas\Cache\Storage\Adapter\Memory',
     'DoctrineModule',
     'DoctrineORMModule',
+    'LmcCors',
     'Application',
 ];
