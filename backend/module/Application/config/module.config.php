@@ -17,6 +17,8 @@ use Application\Controller\BookController;
 use Application\Factory\BookControllerFactory;
 use Application\Controller\LoanController;
 use Application\Factory\LoanControllerFactory;
+use Application\Controller\PenaltyController;
+use Application\Factory\PenaltyControllerFactory;
 
 return [
     'router' => [
@@ -114,6 +116,19 @@ return [
                     ],
                 ],
             ],
+            'api-penalty-pay' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/api/penalties/:id/pay',
+                    'constraints' => [
+                        'id' => '[1-9][0-9]*',
+                    ],
+                    'defaults' => [
+                        'controller' => PenaltyController::class,
+                        'action' => 'pay',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
@@ -122,6 +137,7 @@ return [
             Controller\AuthController::class => AuthControllerFactory::class,
             BookController::class => BookControllerFactory::class,
             LoanController::class => LoanControllerFactory::class,
+            PenaltyController::class => PenaltyControllerFactory::class,
         ],
     ],
     'service_manager' => [

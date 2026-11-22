@@ -4,6 +4,7 @@ namespace Application\Service;
 
 use Application\Entity\Book;
 use Application\Entity\Loan;
+use Application\Entity\Penalty;
 use Application\Entity\SystemSetting;
 use Application\Entity\User;
 use DateTime;
@@ -17,7 +18,8 @@ use RuntimeException;
 class LoanService
 {
     public function __construct(
-        private EntityManager $entityManager
+        private EntityManager $entityManager,
+        private PenaltyService $penaltyService
     ) {}
 
     public function borrowBook(User $student, int $bookId): array
@@ -95,6 +97,16 @@ class LoanService
                     );
                 }
 
+                if (
+                    $this->penaltyService
+                        ->hasUnpaidPenalties($lockedStudent)
+                ) {
+                    throw new DomainException(
+                        'You have unpaid penalties',
+                        409
+                    );
+                }
+
                 $loan = new Loan();
                 $loan->setUser($lockedStudent);
                 $loan->setBook($book);
@@ -148,22 +160,10 @@ class LoanService
                     );
                 }
 
-                $timezone = new DateTimeZone('UTC');
-                $now = new DateTime('now', $timezone);
-
-                $today = DateTimeImmutable::createFromMutable($now)
-                    ->setTime(0, 0);
-
-                $dueDate = DateTimeImmutable::createFromMutable(
-                    $loan->getDue_at()
-                )->setTimezone($timezone)->setTime(0, 0);
-
-                if ($today > $dueDate) {
-                    throw new DomainException(
-                        'Overdue return requires penalty processing',
-                        409
-                    );
-                }
+                $now = new DateTime(
+                    'now',
+                    new DateTimeZone('UTC')
+                );
 
                 $book = $em->find(
                     Book::class,
@@ -177,8 +177,16 @@ class LoanService
                     );
                 }
 
+                $penaltyResult = $this->penaltyService
+                    ->applyOnReturn($loan, $now);
+
                 $loan->setReturnedAt($now);
-                $loan->setStatus('closed');
+
+                $loan->setStatus(
+                    $penaltyResult['has_unpaid_penalty']
+                        ? 'awaiting_payment'
+                        : 'closed'
+                );
 
                 $book->setStock($book->getStock() + 1);
 
@@ -186,8 +194,9 @@ class LoanService
                     'loan_id' => $loan->getId(),
                     'book_id' => $book->getId(),
                     'returned_at' => $now->format(DATE_ATOM),
+                    'days_late' => $penaltyResult['days_late'],
+                    'penalty' => $penaltyResult['amount'],
                     'status' => $loan->getStatus(),
-                    'penalty' => '0.00',
                     'remaining_stock' => $book->getStock(),
                 ];
             }
@@ -228,9 +237,26 @@ class LoanService
             new DateTimeZone('UTC')
         ))->setTime(0, 0);
 
+        $penaltyRepository = $this->entityManager
+            ->getRepository(Penalty::class);
+
         $result = [];
 
         foreach ($loans as $loan) {
+            $penalties = [];
+
+            foreach (
+                $penaltyRepository->findBy(['loan' => $loan])
+                as $penalty
+            ) {
+                $penalties[] = [
+                    'id' => $penalty->getId(),
+                    'amount' => $penalty->getAmount(),
+                    'days_late' => $penalty->getDaysLate(),
+                    'paid' => $penalty->isPaid(),
+                ];
+            }
+
             $dueDate = DateTimeImmutable::createFromMutable(
                 $loan->getDue_at()
             )->setTimezone(
@@ -260,6 +286,7 @@ class LoanService
                     : $loan->getStatus(),
                 'is_overdue' => $isOverdue,
                 'days_overdue' => $daysOverdue,
+                'penalties' => $penalties,
             ];
         }
 

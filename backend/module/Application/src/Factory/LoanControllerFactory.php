@@ -22,7 +22,10 @@ class LoanControllerFactory implements FactoryInterface
         );
 
         return new LoanController(
-            new LoanService($entityManager),
+            new LoanService(
+                $entityManager,
+                new \Application\Service\PenaltyService($entityManager)
+            ),
             $container->get(UserService::class),
             $container->get(AuthorizationService::class)
         );
