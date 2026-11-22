@@ -16,6 +16,11 @@ class Loan
     #[ORM\Column(type: 'integer')]
     private int|null $id = null;
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
     private User $user;
@@ -30,12 +35,12 @@ class Loan
     #[ORM\Column(type: 'datetime')]
     private \DateTime $due_at;
 
-    #[ORM\Column(type: 'datetime', nullable:true)]
+    #[ORM\Column(type: 'datetime', nullable: true)]
     private ?DateTime $returned_at = null;
 
     /** @var string */
-    #[ORM\Column(type: 'string', length:255)]
-    private string $status='active';
+    #[ORM\Column(type: 'string', length: 255)]
+    private string $status = 'active';
 
     public function getUser(): User
     {
@@ -56,14 +61,17 @@ class Loan
     }
 
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->borrowed_at = new DateTime();
     }
-    public function getBorrowed(): DateTime{
+    public function getBorrowed(): DateTime
+    {
         return $this->borrowed_at;
     }
 
-    public function getDue_at(): DateTime{
+    public function getDue_at(): DateTime
+    {
         return $this->due_at;
     }
     public function setDue_at(DateTime $due_at): void
@@ -71,7 +79,8 @@ class Loan
         $this->due_at = $due_at;
     }
 
-    public function getReturnedAt(): ?DateTime{
+    public function getReturnedAt(): ?DateTime
+    {
         return $this->returned_at;
     }
     public function setReturnedAt(?DateTime $returned_at): void
@@ -79,16 +88,18 @@ class Loan
         $this->returned_at = $returned_at;
     }
 
-    public function setStatus(string $status): void{
-       $allowed = ['active', 'overdue', 'awaiting_payment', 'closed'];
+    public function setStatus(string $status): void
+    {
+        $allowed = ['active', 'overdue', 'awaiting_payment', 'closed'];
 
-       if (!in_array($status, $allowed, true)){
-        throw new \InvalidArgumentException('Invalid status');
-       }
+        if (!in_array($status, $allowed, true)) {
+            throw new \InvalidArgumentException('Invalid status');
+        }
 
-       $this->status = $status;
+        $this->status = $status;
     }
-    public function getStatus(): string{
+    public function getStatus(): string
+    {
         return $this->status;
     }
 }

@@ -15,7 +15,8 @@ use Application\Service\AuthorizationService;
 use Application\Factory\AuthorizationServiceFactory;
 use Application\Controller\BookController;
 use Application\Factory\BookControllerFactory;
-use Laminas\Router\Http\Method;
+use Application\Controller\LoanController;
+use Application\Factory\LoanControllerFactory;
 
 return [
     'router' => [
@@ -90,6 +91,29 @@ return [
                     ],
                 ],
             ],
+            'api-loans' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/api/loans',
+                    'defaults' => [
+                        'controller' => LoanController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
+            'api-loan-return' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/api/loans/:id/return',
+                    'constraints' => [
+                        'id' => '[1-9][0-9]*',
+                    ],
+                    'defaults' => [
+                        'controller' => LoanController::class,
+                        'action' => 'return',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
@@ -97,6 +121,7 @@ return [
             Controller\IndexController::class => InvokableFactory::class,
             Controller\AuthController::class => AuthControllerFactory::class,
             BookController::class => BookControllerFactory::class,
+            LoanController::class => LoanControllerFactory::class,
         ],
     ],
     'service_manager' => [
