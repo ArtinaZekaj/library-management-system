@@ -19,6 +19,8 @@ use Application\Controller\LoanController;
 use Application\Factory\LoanControllerFactory;
 use Application\Controller\PenaltyController;
 use Application\Factory\PenaltyControllerFactory;
+use Application\Controller\NotificationController;
+use Application\Factory\NotificationControllerFactory;
 
 return [
     'router' => [
@@ -129,6 +131,16 @@ return [
                     ],
                 ],
             ],
+            'api-notifications' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/api/notifications',
+                    'defaults' => [
+                        'controller' => NotificationController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
@@ -138,6 +150,7 @@ return [
             BookController::class => BookControllerFactory::class,
             LoanController::class => LoanControllerFactory::class,
             PenaltyController::class => PenaltyControllerFactory::class,
+            NotificationController::class => NotificationControllerFactory::class,
         ],
     ],
     'service_manager' => [
