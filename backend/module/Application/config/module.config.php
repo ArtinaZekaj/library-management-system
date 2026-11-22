@@ -21,6 +21,8 @@ use Application\Controller\PenaltyController;
 use Application\Factory\PenaltyControllerFactory;
 use Application\Controller\NotificationController;
 use Application\Factory\NotificationControllerFactory;
+use Application\Controller\SettingsController;
+use Application\Factory\SettingsControllerFactory;
 
 return [
     'router' => [
@@ -141,6 +143,16 @@ return [
                     ],
                 ],
             ],
+            'api-settings' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/api/settings',
+                    'defaults' => [
+                        'controller' => SettingsController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
@@ -151,6 +163,7 @@ return [
             LoanController::class => LoanControllerFactory::class,
             PenaltyController::class => PenaltyControllerFactory::class,
             NotificationController::class => NotificationControllerFactory::class,
+            SettingsController::class => SettingsControllerFactory::class,
         ],
     ],
     'service_manager' => [
