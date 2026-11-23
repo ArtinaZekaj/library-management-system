@@ -31,7 +31,7 @@ function StudentDashboard() {
             Dashboard
           </a>
           <Link to="/books">Books</Link>
-          <span>My Loans</span>
+          <Link to="/student/loans">My Loans</Link>
           <span>Penalties</span>
           <span>Notifications</span>
         </nav>
