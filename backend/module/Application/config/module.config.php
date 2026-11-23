@@ -23,6 +23,8 @@ use Application\Controller\NotificationController;
 use Application\Factory\NotificationControllerFactory;
 use Application\Controller\SettingsController;
 use Application\Factory\SettingsControllerFactory;
+use Application\Controller\UserManagementController;
+use Application\Factory\UserManagementControllerFactory;
 
 return [
     'router' => [
@@ -153,6 +155,29 @@ return [
                     ],
                 ],
             ],
+            'api-users' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/api/users',
+                    'defaults' => [
+                        'controller' => UserManagementController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
+            'api-user-detail' => [
+                'type' => Segment::class,
+                'options' => [
+                    'route' => '/api/users/:id',
+                    'constraints' => [
+                        'id' => '[1-9][0-9]*',
+                    ],
+                    'defaults' => [
+                        'controller' => UserManagementController::class,
+                        'action' => 'detail',
+                    ],
+                ],
+            ],
         ],
     ],
     'controllers' => [
@@ -164,6 +189,7 @@ return [
             PenaltyController::class => PenaltyControllerFactory::class,
             NotificationController::class => NotificationControllerFactory::class,
             SettingsController::class => SettingsControllerFactory::class,
+            UserManagementController::class => UserManagementControllerFactory::class,
         ],
     ],
     'service_manager' => [
