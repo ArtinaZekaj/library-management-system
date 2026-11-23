@@ -1,0 +1,75 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router'
+import { useAuth } from '../context/auth-context'
+
+function StudentDashboard() {
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  async function handleLogout() {
+    setError('')
+    setLoading(true)
+
+    try {
+      await logout()
+      navigate('/login', { replace: true })
+    } catch {
+      setError('Logout failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="student-layout">
+      <aside className="student-sidebar">
+        <h2>Library System</h2>
+        <nav aria-label="Student navigation">
+          <a href="#student-overview" aria-current="page">
+            Dashboard
+          </a>
+          <span>Books</span>
+          <span>My Loans</span>
+          <span>Penalties</span>
+          <span>Notifications</span>
+        </nav>
+      </aside>
+
+      <main className="student-main" id="student-overview">
+        <header className="student-header">
+          <div>
+            <h1>Student Dashboard</h1>
+            <p>Welcome, {user.name}!</p>
+          </div>
+          <button onClick={handleLogout} disabled={loading}>
+            {loading ? 'Logging out...' : 'Logout'}
+          </button>
+        </header>
+
+        {error && <p role="alert">{error}</p>}
+
+        <section aria-label="Student overview">
+          <h2>Overview</h2>
+          <div className="student-cards">
+            <article>
+              <h3>My Loans</h3>
+              <p>Available soon</p>
+            </article>
+            <article>
+              <h3>Penalties</h3>
+              <p>Available soon</p>
+            </article>
+            <article>
+              <h3>Notifications</h3>
+              <p>Available soon</p>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  )
+}
+
+export default StudentDashboard

@@ -4,12 +4,17 @@ import LoginPage from './pages/LoginPage'
 import './App.css'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './context/auth-context'
+import StudentDashboard from './pages/StudentDashboard'
 
 function Dashboard() {
-  const { logout } = useAuth()
+  const { user, logout } = useAuth()
   const navigate = useNavigate()
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  if (user?.role === 'student') {
+    return <Navigate to="/student/dashboard" replace />
+  }
 
   const handleLogout = async () => {
     setError('')
@@ -47,6 +52,15 @@ function App() {
         element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/student/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <StudentDashboard />
           </ProtectedRoute>
         }
       />
