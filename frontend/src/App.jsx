@@ -7,6 +7,7 @@ import { useAuth } from './context/auth-context'
 import StudentDashboard from './pages/StudentDashboard'
 import BooksPage from './pages/BooksPage'
 import MyLoansPage from './pages/MyLoansPage'
+import PenaltiesPage from './pages/PenaltiesPage'
 
 function Dashboard() {
   const { user, logout } = useAuth()
@@ -81,6 +82,15 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={['student']}>
             <MyLoansPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/student/penalties"
+        element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <PenaltiesPage />
           </ProtectedRoute>
         }
       />
