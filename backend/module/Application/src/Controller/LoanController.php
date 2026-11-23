@@ -254,7 +254,18 @@ class LoanController extends AbstractActionController
         }
 
         try {
-            $result = $this->loanService->returnBook($loanId);
+            $actor = $this->userService->getCurrentUser();
+
+            if ($actor === null) {
+                $response->setStatusCode(401);
+
+                return new JsonModel([
+                    'success' => false,
+                    'message' => 'You must be logged in',
+                ]);
+            }
+
+            $result = $this->loanService->returnBook($loanId, $actor);
 
             $response->setStatusCode(200);
 

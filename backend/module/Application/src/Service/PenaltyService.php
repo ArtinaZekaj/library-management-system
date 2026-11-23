@@ -18,7 +18,8 @@ use RuntimeException;
 class PenaltyService
 {
     public function __construct(
-        private EntityManager $entityManager
+        private EntityManager $entityManager,
+        private SystemLogService $systemLogService
     ) {}
 
     public function hasUnpaidPenalties(User $student): bool
@@ -39,7 +40,8 @@ class PenaltyService
 
     public function applyOnReturn(
         Loan $loan,
-        DateTimeInterface $returnedAt
+        DateTimeInterface $returnedAt,
+        User $actor
     ): array {
         $utc = new DateTimeZone('UTC');
 
@@ -106,6 +108,16 @@ class PenaltyService
         $penalty->setPaid(false);
 
         $this->entityManager->persist($penalty);
+
+        $this->entityManager->flush();
+
+        $this->systemLogService->log(
+            $actor,
+            'PENALTY_CREATED',
+            'Penalty',
+            $penalty->getId(),
+            'Penalty created for overdue return'
+        );
 
         return [
             'days_late' => $daysLate,
@@ -197,6 +209,14 @@ class PenaltyService
                 $penalty->setPaidAt($now);
 
                 $loan->setStatus('closed');
+
+                $this->systemLogService->log(
+                    $actor,
+                    'PENALTY_PAID',
+                    'Penalty',
+                    $penalty->getId(),
+                    'Penalty payment recorded'
+                );
 
                 return [
                     'penalty_id' => $penaltyId,

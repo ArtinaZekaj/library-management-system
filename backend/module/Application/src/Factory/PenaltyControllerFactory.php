@@ -7,6 +7,7 @@ use Application\Service\PenaltyService;
 use Application\Service\UserService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
+use Application\Service\SystemLogService;
 
 class PenaltyControllerFactory implements FactoryInterface
 {
@@ -21,7 +22,10 @@ class PenaltyControllerFactory implements FactoryInterface
         );
 
         return new PenaltyController(
-            new PenaltyService($entityManager),
+            new PenaltyService(
+                $entityManager,
+                $container->get(SystemLogService::class)
+            ),
             $container->get(UserService::class)
         );
     }
