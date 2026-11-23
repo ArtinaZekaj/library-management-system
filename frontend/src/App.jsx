@@ -5,6 +5,7 @@ import './App.css'
 import ProtectedRoute from './components/ProtectedRoute'
 import { useAuth } from './context/auth-context'
 import StudentDashboard from './pages/StudentDashboard'
+import BooksPage from './pages/BooksPage'
 
 function Dashboard() {
   const { user, logout } = useAuth()
@@ -61,6 +62,15 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={['student']}>
             <StudentDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/books"
+        element={
+          <ProtectedRoute>
+            <BooksPage />
           </ProtectedRoute>
         }
       />
