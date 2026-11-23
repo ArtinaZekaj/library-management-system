@@ -8,6 +8,7 @@ use Application\Service\LoanService;
 use Application\Service\UserService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
+use Application\Service\SystemLogService;
 
 class LoanControllerFactory implements FactoryInterface
 {
@@ -24,7 +25,11 @@ class LoanControllerFactory implements FactoryInterface
         return new LoanController(
             new LoanService(
                 $entityManager,
-                new \Application\Service\PenaltyService($entityManager)
+                new \Application\Service\PenaltyService(
+                    $entityManager,
+                    $container->get(SystemLogService::class)
+                ),
+                $container->get(SystemLogService::class)
             ),
             $container->get(UserService::class),
             $container->get(AuthorizationService::class)

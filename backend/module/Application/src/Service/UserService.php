@@ -15,7 +15,8 @@ class UserService
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        SessionManager $sessionManager
+        SessionManager $sessionManager,
+        private SystemLogService $systemLogService
     ) {
         $this->entityManager = $entityManager;
         $this->sessionManager = $sessionManager;
@@ -54,8 +55,42 @@ class UserService
 
         $user->setRole($data['role']);
 
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+
+        $actor = $this->getCurrentUser();
+
+        if ($actor === null || $actor->getRole() !== 'super_admin') {
+            throw new \DomainException('Access denied', 403);
+        }
+
+        $this->entityManager->wrapInTransaction(
+            function () use ($user, $actor): void {
+                $this->entityManager->persist($user);
+
+                $actor = $this->getCurrentUser();
+
+                if ($actor === null || $actor->getRole() !== 'super_admin') {
+                    throw new \DomainException('Access denied', 403);
+                }
+
+                $this->systemLogService->log(
+                    $actor,
+                    'USER_UPDATED',
+                    'User',
+                    $user->getId(),
+                    'User account updated'
+                );
+
+                $this->entityManager->flush();
+
+                $this->systemLogService->log(
+                    $actor,
+                    'USER_CREATED',
+                    'User',
+                    $user->getId(),
+                    'User account created'
+                );
+            }
+        );
 
         return $user;
     }
@@ -248,6 +283,31 @@ class UserService
                 409
             );
         }
+
+        $logCount = $this->entityManager
+            ->getRepository(\Application\Entity\SystemLog::class)
+            ->count(['actor' => $user]);
+
+        if ($logCount > 0) {
+            throw new \DomainException(
+                'User has activity history and cannot be deleted',
+                409
+            );
+        }
+
+        $actor = $this->getCurrentUser();
+
+        if ($actor === null || $actor->getRole() !== 'super_admin') {
+            throw new \DomainException('Access denied', 403);
+        }
+
+        $this->systemLogService->log(
+            $actor,
+            'USER_DELETED',
+            'User',
+            $user->getId(),
+            'User account deleted'
+        );
 
         $this->entityManager->remove($user);
         $this->entityManager->flush();

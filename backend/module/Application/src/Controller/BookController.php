@@ -14,6 +14,8 @@ use Laminas\Validator\StringLength;
 use Laminas\Filter\StringTrim;
 use Laminas\Validator\NotEmpty;
 use Laminas\Validator\Digits;
+use Application\Service\UserService;
+use Application\Service\SystemLogService;
 
 class BookController extends AbstractActionController
 {
@@ -22,7 +24,9 @@ class BookController extends AbstractActionController
 
     public function __construct(
         AuthorizationService $authorizationService,
-        EntityManager $entityManager
+        EntityManager $entityManager,
+        private UserService $userService,
+        private SystemLogService $systemLogService
     ) {
         $this->authorizationService = $authorizationService;
         $this->entityManager = $entityManager;
@@ -415,6 +419,20 @@ class BookController extends AbstractActionController
         $book->setCategory($validatedData['category']);
         $book->setStock((int) $validatedData['stock']);
 
+        $actor = $this->userService->getCurrentUser();
+
+        if ($actor === null) {
+            throw new \RuntimeException('Authenticated user not found');
+        }
+
+        $this->systemLogService->log(
+            $actor,
+            'BOOK_UPDATED',
+            'Book',
+            $book->getId(),
+            'Book updated'
+        );
+
         $this->entityManager->flush();
 
         return new JsonModel([
@@ -523,6 +541,34 @@ class BookController extends AbstractActionController
                 'message' => 'Cannot delete a book with loan history',
             ]);
         }
+
+        $actor = $this->userService->getCurrentUser();
+
+        if ($actor === null) {
+            throw new \RuntimeException('Authenticated user not found');
+        }
+
+        $this->systemLogService->log(
+            $actor,
+            'BOOK_DELETED',
+            'Book',
+            $book->getId(),
+            'Book deleted'
+        );
+
+        $actor = $this->userService->getCurrentUser();
+
+        if ($actor === null) {
+            throw new \RuntimeException('Authenticated user not found');
+        }
+
+        $this->systemLogService->log(
+            $actor,
+            'BOOK_DELETED',
+            'Book',
+            $book->getId(),
+            'Book deleted'
+        );
 
         $this->entityManager->remove($book);
         $this->entityManager->flush();
@@ -757,8 +803,26 @@ class BookController extends AbstractActionController
         $book->setCategory($validatedData['category']);
         $book->setStock((int) $validatedData['stock']);
 
-        $this->entityManager->persist($book);
-        $this->entityManager->flush();
+        $actor = $this->userService->getCurrentUser();
+
+        if ($actor === null) {
+            throw new \RuntimeException('Authenticated user not found');
+        }
+
+        $this->entityManager->wrapInTransaction(
+            function () use ($book, $actor): void {
+                $this->entityManager->persist($book);
+                $this->entityManager->flush();
+
+                $this->systemLogService->log(
+                    $actor,
+                    'BOOK_CREATED',
+                    'Book',
+                    $book->getId(),
+                    'Book created'
+                );
+            }
+        );
 
         /** @var Response $response */
         $response = $this->getResponse();

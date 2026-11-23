@@ -7,6 +7,7 @@ use Psr\Container\ContainerInterface;
 use Application\Service\UserService;
 use Laminas\Session\SessionManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Application\Service\SystemLogService;
 
 class UserServiceFactory implements FactoryInterface
 {
@@ -19,6 +20,10 @@ class UserServiceFactory implements FactoryInterface
 
         $sessionManager = $container->get(SessionManager::class);
 
-        return new UserService($entityManager, $sessionManager);
+        return new UserService(
+            $entityManager,
+            $sessionManager,
+            $container->get(SystemLogService::class)
+        );
     }
 }

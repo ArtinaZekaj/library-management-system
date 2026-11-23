@@ -19,7 +19,8 @@ class LoanService
 {
     public function __construct(
         private EntityManager $entityManager,
-        private PenaltyService $penaltyService
+        private PenaltyService $penaltyService,
+        private SystemLogService $systemLogService
     ) {}
 
     public function borrowBook(User $student, int $bookId): array
@@ -99,7 +100,7 @@ class LoanService
 
                 if (
                     $this->penaltyService
-                        ->hasUnpaidPenalties($lockedStudent)
+                    ->hasUnpaidPenalties($lockedStudent)
                 ) {
                     throw new DomainException(
                         'You have unpaid penalties',
@@ -121,6 +122,16 @@ class LoanService
 
                 $em->persist($loan);
 
+                $em->flush();
+
+                $this->systemLogService->log(
+                    $lockedStudent,
+                    'BOOK_BORROWED',
+                    'Loan',
+                    $loan->getId(),
+                    'Book borrowed'
+                );
+
                 return [
                     'book_id' => $book->getId(),
                     'borrowed_at' => $loan->getBorrowed()
@@ -135,10 +146,10 @@ class LoanService
         );
     }
 
-    public function returnBook(int $loanId): array
+    public function returnBook(int $loanId, User $actor): array
     {
         return $this->entityManager->wrapInTransaction(
-            function (EntityManager $em) use ($loanId): array {
+            function (EntityManager $em) use ($loanId, $actor): array {
 
                 $loan = $em->find(
                     Loan::class,
@@ -178,7 +189,7 @@ class LoanService
                 }
 
                 $penaltyResult = $this->penaltyService
-                    ->applyOnReturn($loan, $now);
+                    ->applyOnReturn($loan, $now, $actor);
 
                 $loan->setReturnedAt($now);
 
@@ -189,6 +200,14 @@ class LoanService
                 );
 
                 $book->setStock($book->getStock() + 1);
+
+                $this->systemLogService->log(
+                    $actor,
+                    'BOOK_RETURNED',
+                    'Loan',
+                    $loan->getId(),
+                    'Book returned'
+                );
 
                 return [
                     'loan_id' => $loan->getId(),
