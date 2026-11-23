@@ -25,6 +25,10 @@ use Application\Controller\SettingsController;
 use Application\Factory\SettingsControllerFactory;
 use Application\Controller\UserManagementController;
 use Application\Factory\UserManagementControllerFactory;
+use Application\Service\SystemLogService;
+use Application\Factory\SystemLogServiceFactory;
+use Application\Controller\SystemLogController;
+use Application\Factory\SystemLogControllerFactory;
 
 return [
     'router' => [
@@ -165,6 +169,16 @@ return [
                     ],
                 ],
             ],
+            'api-system-logs' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/api/system-logs',
+                    'defaults' => [
+                        'controller' => SystemLogController::class,
+                        'action' => 'index',
+                    ],
+                ],
+            ],
             'api-user-detail' => [
                 'type' => Segment::class,
                 'options' => [
@@ -190,6 +204,7 @@ return [
             NotificationController::class => NotificationControllerFactory::class,
             SettingsController::class => SettingsControllerFactory::class,
             UserManagementController::class => UserManagementControllerFactory::class,
+            SystemLogController::class => SystemLogControllerFactory::class,
         ],
     ],
     'service_manager' => [
@@ -197,6 +212,7 @@ return [
             UserService::class => UserServiceFactory::class,
             RbacService::class => InvokableFactory::class,
             AuthorizationService::class => AuthorizationServiceFactory::class,
+            SystemLogService::class => SystemLogServiceFactory::class,
         ],
     ],
     'view_manager' => [
