@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router'
+import { Link, useNavigate } from 'react-router'
 import { useAuth } from '../context/auth-context'
 
 function StudentDashboard() {
@@ -30,7 +30,7 @@ function StudentDashboard() {
           <a href="#student-overview" aria-current="page">
             Dashboard
           </a>
-          <span>Books</span>
+          <Link to="/books">Books</Link>
           <span>My Loans</span>
           <span>Penalties</span>
           <span>Notifications</span>
