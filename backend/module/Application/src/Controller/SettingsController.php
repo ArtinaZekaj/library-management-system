@@ -101,4 +101,58 @@ class SettingsController extends AbstractActionController
             ]);
         }
     }
+
+    public function borrowingFeeAction()
+    {
+        /** @var Request $request */
+        $request = $this->getRequest();
+
+        /** @var Response $response */
+        $response = $this->getResponse();
+
+        if (!$request->isGet()) {
+            $response->setStatusCode(405);
+
+            return new JsonModel([
+                'success' => false,
+                'message' => 'Method not allowed',
+            ]);
+        }
+
+        $currentUser = $this->userService->getCurrentUser();
+
+        if ($currentUser === null) {
+            $response->setStatusCode(401);
+
+            return new JsonModel([
+                'success' => false,
+                'message' => 'You must be logged in',
+            ]);
+        }
+
+        if ($currentUser->getRole() !== 'student') {
+            $response->setStatusCode(403);
+
+            return new JsonModel([
+                'success' => false,
+                'message' => 'Access denied',
+            ]);
+        }
+
+        try {
+            $settings = $this->settingsService->getSettings();
+
+            return new JsonModel([
+                'success' => true,
+                'borrow_fee' => $settings['borrow_fee'],
+            ]);
+        } catch (Throwable $e) {
+            $response->setStatusCode(500);
+
+            return new JsonModel([
+                'success' => false,
+                'message' => 'Unable to retrieve borrowing fee',
+            ]);
+        }
+    }
 }
