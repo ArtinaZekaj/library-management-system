@@ -10,6 +10,7 @@ import MyLoansPage from './pages/MyLoansPage'
 import PenaltiesPage from './pages/PenaltiesPage'
 import NotificationsPage from './pages/NotificationsPage'
 import OperatorDashboard from './pages/OperatorDashboard'
+import ManageBooksPage from './pages/ManageBooksPage'
 
 function Dashboard() {
   const { user, logout } = useAuth()
@@ -115,6 +116,15 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={['operator']}>
             <OperatorDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/operator/manage-books"
+        element={
+          <ProtectedRoute allowedRoles={['operator']}>
+            <ManageBooksPage />
           </ProtectedRoute>
         }
       />

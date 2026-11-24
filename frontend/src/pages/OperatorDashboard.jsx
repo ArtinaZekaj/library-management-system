@@ -32,7 +32,7 @@ function OperatorDashboard() {
             Dashboard
           </Link>
           <Link to="/books">Books</Link>
-          <span>Manage Books</span>
+          <Link to="/operator/manage-books">Manage Books</Link>
           <span>Loans &amp; Returns</span>
           <span>Notifications</span>
         </nav>
