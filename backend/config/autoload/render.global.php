@@ -5,6 +5,11 @@ if (getenv('RENDER') !== 'true') {
 }
 
 return [
+    'lmc_cors' => [
+        'allowed_origins' => [
+            'https://library-management-system-tawny-sigma.vercel.app',
+        ],
+    ],
     'doctrine' => [
         'connection' => [
             'orm_default' => [
