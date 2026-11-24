@@ -18,6 +18,7 @@ function OperatorLoansPage() {
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const [returningId, setReturningId] = useState(null)
+  const [payingId, setPayingId] = useState(null)
 
   useEffect(() => {
     let ignore = false
@@ -48,6 +49,52 @@ function OperatorLoansPage() {
       ignore = true
     }
   }, [])
+
+  async function handlePay(penalty, loan) {
+    if (payingId !== null || returningId !== null || penalty.paid) return
+
+    const confirmed = window.confirm(
+      `Confirm penalty payment of €${penalty.amount} for Student ${loan.user_id}?`
+    )
+
+    if (!confirmed) return
+
+    setError('')
+    setMessage('')
+    setPayingId(penalty.id)
+
+    try {
+      const data = await apiRequest(`/penalties/${penalty.id}/pay`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          payment_confirmed: true,
+        }),
+      })
+
+      if (
+        data.penalty?.paid !== true ||
+        Number(data.penalty.penalty_id) !== Number(penalty.id)
+      ) {
+        throw new Error('Refresh the page to verify the payment')
+      }
+
+      const updated = await apiRequest('/loans')
+
+      if (!Array.isArray(updated.loans)) {
+        throw new Error('Invalid loans response')
+      }
+
+      setLoans(updated.loans)
+      setMessage('Penalty payment recorded successfully.')
+    } catch (err) {
+      setError(
+        `${err.message || 'Payment failed.'} Refresh before retrying.`
+      )
+    } finally {
+      setPayingId(null)
+    }
+  }
 
   async function handleReturn(loan) {
     if (returningId !== null) return
@@ -185,11 +232,23 @@ function OperatorLoansPage() {
                           {loan.penalties.length === 0
                             ? '-'
                             : loan.penalties.map((penalty) => (
-                                <div key={penalty.id}>
-                                  {penalty.amount} —{' '}
-                                  {penalty.paid ? 'Paid' : 'Unpaid'}
-                                </div>
-                              ))}
+                              <div key={penalty.id}>
+                                €{penalty.amount} —{' '}
+                                {penalty.paid ? 'Paid' : 'Unpaid'}
+
+                                {!penalty.paid && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handlePay(penalty, loan)}
+                                    disabled={payingId !== null || returningId !== null}
+                                  >
+                                    {payingId === penalty.id
+                                      ? 'Processing...'
+                                      : 'Pay Penalty'}
+                                  </button>
+                                )}
+                              </div>
+                            ))}
                         </td>
                       </tr>
                     ))}
