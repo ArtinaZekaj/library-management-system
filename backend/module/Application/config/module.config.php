@@ -159,6 +159,16 @@ return [
                     ],
                 ],
             ],
+            'api-borrowing-fee' => [
+                'type' => Literal::class,
+                'options' => [
+                    'route' => '/api/borrowing-fee',
+                    'defaults' => [
+                        'controller' => SettingsController::class,
+                        'action' => 'borrowingFee',
+                    ],
+                ],
+            ],
             'api-users' => [
                 'type' => Literal::class,
                 'options' => [
