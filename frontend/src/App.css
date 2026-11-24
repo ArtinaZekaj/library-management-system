@@ -204,26 +204,32 @@
 }
 
 
-.books-page {
+
+.books-page,
+.manage-books-page {
   max-width: 1100px;
   margin: 0 auto;
   padding: 32px 20px;
 }
 
-.books-page h1 {
+.books-page h1,
+.manage-books-page h1 {
   margin: 24px 0 8px;
 }
 
-.books-page > p {
+.books-page > p,
+.manage-books-page > p {
   margin-bottom: 20px;
 }
 
-.books-page label {
+.books-page label,
+.manage-books-page label {
   display: block;
   margin-bottom: 8px;
 }
 
-.books-page input {
+.books-page input,
+.manage-books-page input {
   width: 100%;
   max-width: 400px;
   padding: 10px;
@@ -232,29 +238,35 @@
   border-radius: 6px;
 }
 
-.books-table-wrapper {
+.books-table-wrapper,
+.manage-books-table-wrapper {
   width: 100%;
   overflow-x: auto;
 }
 
-.books-table {
+.books-table,
+.manage-books-table {
   width: 100%;
   border-collapse: collapse;
   background: white;
 }
 
 .books-table th,
-.books-table td {
+.books-table td,
+.manage-books-table th,
+.manage-books-table td {
   padding: 12px;
   border: 1px solid #ddd;
   text-align: left;
 }
 
-.books-table th {
+.books-table th,
+.manage-books-table th {
   background: #f1f5f9;
 }
 
-.books-table tr:hover {
+.books-table tr:hover,
+.manage-books-table tr:hover {
   background: #f8fafc;
 }
 
@@ -483,4 +495,80 @@
   .operator-cards {
     grid-template-columns: 1fr;
   }
+}
+
+
+.manage-books-page > button,
+.add-book-form button {
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.add-book-form {
+  max-width: 450px;
+  padding: 20px;
+  margin-bottom: 24px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.add-book-form h2 {
+  margin-bottom: 20px;
+}
+
+.add-book-form div {
+  margin-bottom: 14px;
+}
+
+.add-book-form label,
+.manage-books-search label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.add-book-form input {
+  width: 100%;
+  max-width: 100%;
+  margin-bottom: 0;
+}
+
+.manage-books-page button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.manage-books-page [role="alert"] {
+  color: #dc2626;
+}
+
+.manage-books-page [role="status"] {
+  margin-bottom: 16px;
+}
+
+
+.book-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.book-form-actions button {
+  min-width: 110px;
+  padding: 10px 16px;
+  margin-bottom: 0;
+  border-radius: 5px;
+}
+
+.book-form-actions button[type="submit"] {
+  background: #2563eb;
+  color: white;
+  border: 1px solid #2563eb;
+}
+
+.book-form-actions button[type="button"] {
+  background: white;
+  color: #1f2937;
+  border: 1px solid #ccc;
 }
