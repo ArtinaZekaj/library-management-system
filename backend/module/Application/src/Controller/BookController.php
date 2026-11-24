@@ -556,20 +556,6 @@ class BookController extends AbstractActionController
             'Book deleted'
         );
 
-        $actor = $this->userService->getCurrentUser();
-
-        if ($actor === null) {
-            throw new \RuntimeException('Authenticated user not found');
-        }
-
-        $this->systemLogService->log(
-            $actor,
-            'BOOK_DELETED',
-            'Book',
-            $book->getId(),
-            'Book deleted'
-        );
-
         $this->entityManager->remove($book);
         $this->entityManager->flush();
 

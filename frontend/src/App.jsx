@@ -16,6 +16,7 @@ import OperatorNotificationsPage from './pages/OperatorNotificationsPage'
 import SuperAdminDashboard from './pages/SuperAdminDashboard'
 import UserManagementPage from './pages/UserManagementPage'
 import SuperAdminSettingsPage from './pages/SuperAdminSettingsPage'
+import SystemLogsPage from './pages/SystemLogsPage'
 
 function Dashboard() {
   const { user, logout } = useAuth()
@@ -179,6 +180,15 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={['super_admin']}>
             <SuperAdminSettingsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/super-admin/system-logs"
+        element={
+          <ProtectedRoute allowedRoles={['super_admin']}>
+            <SystemLogsPage />
           </ProtectedRoute>
         }
       />
