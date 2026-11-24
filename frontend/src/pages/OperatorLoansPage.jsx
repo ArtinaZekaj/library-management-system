@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { apiRequest } from '../api/client'
+import { useAuth } from '../context/auth-context'
 
 function formatDate(value) {
   if (!value) return '-'
@@ -12,6 +13,13 @@ function formatDate(value) {
 }
 
 function OperatorLoansPage() {
+  const { user } = useAuth()
+
+  const dashboardPath =
+    user?.role === 'super_admin'
+      ? '/super-admin/dashboard'
+      : '/operator/dashboard'
+
   const [loans, setLoans] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
@@ -139,7 +147,7 @@ function OperatorLoansPage() {
 
   return (
     <main className="loans-page">
-      <Link to="/operator/dashboard">Back to Dashboard</Link>
+      <Link to={dashboardPath}>Back to Dashboard</Link>
 
       <h1>Loans &amp; Returns</h1>
       <p>View loans and manage book returns.</p>

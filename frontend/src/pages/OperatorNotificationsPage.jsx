@@ -1,8 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { apiRequest } from '../api/client'
+import { useAuth } from '../context/auth-context'
 
 function OperatorNotificationsPage() {
+  const { user } = useAuth()
+
+  const dashboardPath =
+    user?.role === 'super_admin'
+      ? '/super-admin/dashboard'
+      : '/operator/dashboard'
+
   const [notifications, setNotifications] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -39,7 +47,7 @@ function OperatorNotificationsPage() {
 
   return (
     <main className="notifications-page">
-      <Link to="/operator/dashboard">Back to Dashboard</Link>
+      <Link to={dashboardPath}>Back to Dashboard</Link>
 
       <h1>Notifications</h1>
       <p>View book stock notifications.</p>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router'
 import { apiRequest } from '../api/client'
+import { useAuth } from '../context/auth-context'
 
 const emptyForm = {
     title: '',
@@ -11,7 +12,14 @@ const emptyForm = {
 }
 
 function ManageBooksPage() {
-    const [books, setBooks] = useState([])
+    const { user } = useAuth()
+
+    const dashboardPath =
+        user?.role === 'super_admin'
+            ? '/super-admin/dashboard'
+            : '/operator/dashboard'
+
+    const [books, setBooks] = useState([]) 
     const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
@@ -184,7 +192,7 @@ function ManageBooksPage() {
 
     return (
         <main className="manage-books-page">
-            <Link to="/operator/dashboard">Back to Dashboard</Link>
+            <Link to={dashboardPath}>Back to Dashboard</Link>
 
             <h1>Manage Books</h1>
             <p>View and manage library books.</p>
