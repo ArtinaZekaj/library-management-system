@@ -65,21 +65,6 @@ class UserService
         $this->entityManager->wrapInTransaction(
             function () use ($user, $actor): void {
                 $this->entityManager->persist($user);
-
-                $actor = $this->getCurrentUser();
-
-                if ($actor === null || $actor->getRole() !== 'super_admin') {
-                    throw new \DomainException('Access denied', 403);
-                }
-
-                $this->systemLogService->log(
-                    $actor,
-                    'USER_UPDATED',
-                    'User',
-                    $user->getId(),
-                    'User account updated'
-                );
-
                 $this->entityManager->flush();
 
                 $this->systemLogService->log(
@@ -249,7 +234,23 @@ class UserService
             );
         }
 
-        $this->entityManager->flush();
+        $actor = $this->getCurrentUser();
+
+        if ($actor === null || $actor->getRole() !== 'super_admin') {
+            throw new \DomainException('Access denied', 403);
+        }
+
+        $this->entityManager->wrapInTransaction(
+            function () use ($user, $actor): void {
+                $this->systemLogService->log(
+                    $actor,
+                    'USER_UPDATED',
+                    'User',
+                    $user->getId(),
+                    'User account updated'
+                );
+            }
+        );
 
         return [
             'id' => $user->getId(),
