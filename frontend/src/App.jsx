@@ -15,6 +15,7 @@ import OperatorLoansPage from './pages/OperatorLoansPage'
 import OperatorNotificationsPage from './pages/OperatorNotificationsPage'
 import SuperAdminDashboard from './pages/SuperAdminDashboard'
 import UserManagementPage from './pages/UserManagementPage'
+import SuperAdminSettingsPage from './pages/SuperAdminSettingsPage'
 
 function Dashboard() {
   const { user, logout } = useAuth()
@@ -169,6 +170,15 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={['super_admin']}>
             <UserManagementPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/super-admin/settings"
+        element={
+          <ProtectedRoute allowedRoles={['super_admin']}>
+            <SuperAdminSettingsPage />
           </ProtectedRoute>
         }
       />

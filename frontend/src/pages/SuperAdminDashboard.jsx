@@ -35,7 +35,7 @@ function SuperAdminDashboard() {
                     <Link to="/operator/manage-books">Manage Books</Link>
                     <Link to="/operator/loans">Loans &amp; Returns</Link>
                     <Link to="/operator/notifications">Notifications</Link>
-                    <Link to="/super-admin/users">User Management</Link>
+                    <Link to="/super-admin/settings">System Settings</Link>
                 </nav>
             </aside>
 
@@ -67,6 +67,16 @@ function SuperAdminDashboard() {
                             </article>
                         </Link>
 
+                        <Link
+                            to="/super-admin/settings"
+                            style={{ color: 'inherit', textDecoration: 'none' }}
+                        >
+                            <article>
+                                <h3>System Settings</h3>
+                                <p>Manage fees and borrowing rules</p>
+                            </article>
+                        </Link>
+                        
                         <Link
                             to="/operator/manage-books"
                             style={{ color: 'inherit', textDecoration: 'none' }}
