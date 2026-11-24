@@ -13,6 +13,8 @@ import OperatorDashboard from './pages/OperatorDashboard'
 import ManageBooksPage from './pages/ManageBooksPage'
 import OperatorLoansPage from './pages/OperatorLoansPage'
 import OperatorNotificationsPage from './pages/OperatorNotificationsPage'
+import SuperAdminDashboard from './pages/SuperAdminDashboard'
+import UserManagementPage from './pages/UserManagementPage'
 
 function Dashboard() {
   const { user, logout } = useAuth()
@@ -26,6 +28,10 @@ function Dashboard() {
 
   if (user?.role === 'operator') {
     return <Navigate to="/operator/dashboard" replace />
+  }
+
+  if (user?.role === 'super_admin') {
+    return <Navigate to="/super-admin/dashboard" replace />
   }
 
   const handleLogout = async () => {
@@ -116,7 +122,7 @@ function App() {
       <Route
         path="/operator/dashboard"
         element={
-          <ProtectedRoute allowedRoles={['operator']}>
+          <ProtectedRoute allowedRoles={['operator', 'super_admin']}>
             <OperatorDashboard />
           </ProtectedRoute>
         }
@@ -125,7 +131,7 @@ function App() {
       <Route
         path="/operator/manage-books"
         element={
-          <ProtectedRoute allowedRoles={['operator']}>
+          <ProtectedRoute allowedRoles={['operator', 'super_admin']}>
             <ManageBooksPage />
           </ProtectedRoute>
         }
@@ -134,7 +140,7 @@ function App() {
       <Route
         path="/operator/loans"
         element={
-          <ProtectedRoute allowedRoles={['operator']}>
+          <ProtectedRoute allowedRoles={['operator', 'super_admin']}>
             <OperatorLoansPage />
           </ProtectedRoute>
         }
@@ -143,8 +149,26 @@ function App() {
       <Route
         path="/operator/notifications"
         element={
-          <ProtectedRoute allowedRoles={['operator']}>
+          <ProtectedRoute allowedRoles={['operator', 'super_admin']}>
             <OperatorNotificationsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/super-admin/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['super_admin']}>
+            <SuperAdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/super-admin/users"
+        element={
+          <ProtectedRoute allowedRoles={['super_admin']}>
+            <UserManagementPage />
           </ProtectedRoute>
         }
       />
