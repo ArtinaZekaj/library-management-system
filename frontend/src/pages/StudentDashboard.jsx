@@ -33,7 +33,7 @@ function StudentDashboard() {
           <Link to="/books">Books</Link>
           <Link to="/student/loans">My Loans</Link>
           <Link to="/student/penalties">Penalties</Link>
-          <span>Notifications</span>
+          <Link to="/student/notifications">Notifications</Link>
         </nav>
       </aside>
 
