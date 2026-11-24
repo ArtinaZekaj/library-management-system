@@ -53,18 +53,35 @@ function StudentDashboard() {
         <section aria-label="Student overview">
           <h2>Overview</h2>
           <div className="student-cards">
-            <article>
-              <h3>My Loans</h3>
-              <p>Available soon</p>
-            </article>
-            <article>
-              <h3>Penalties</h3>
-              <p>Available soon</p>
-            </article>
-            <article>
-              <h3>Notifications</h3>
-              <p>Available soon</p>
-            </article>
+            <Link
+              to="/student/loans"
+              style={{ color: 'inherit', textDecoration: 'none' }}
+            >
+              <article>
+                <h3>My Loans</h3>
+                <p>View my loans</p>
+              </article>
+            </Link>
+
+            <Link
+              to="/student/penalties"
+              style={{ color: 'inherit', textDecoration: 'none' }}
+            >
+              <article>
+                <h3>Penalties</h3>
+                <p>View my penalties</p>
+              </article>
+            </Link>
+
+            <Link
+              to="/student/notifications"
+              style={{ color: 'inherit', textDecoration: 'none' }}
+            >
+              <article>
+                <h3>Notifications</h3>
+                <p>View my notifications</p>
+              </article>
+            </Link>
           </div>
         </section>
       </main>

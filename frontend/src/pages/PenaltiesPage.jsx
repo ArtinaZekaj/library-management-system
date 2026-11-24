@@ -6,6 +6,8 @@ function PenaltiesPage() {
   const [penalties, setPenalties] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [message, setMessage] = useState('')
+  const [payingId, setPayingId] = useState(null)
 
   useEffect(() => {
     let ignore = false
@@ -39,10 +41,58 @@ function PenaltiesPage() {
 
     loadPenalties()
 
+
     return () => {
       ignore = true
     }
   }, [])
+
+  async function handlePay(penalty) {
+    if (payingId !== null || penalty.paid) return
+
+    const confirmed = window.confirm(
+      `Confirm payment of €${penalty.amount}?`
+    )
+
+    if (!confirmed) return
+
+    setError('')
+    setMessage('')
+    setPayingId(penalty.id)
+
+    try {
+      const data = await apiRequest(`/penalties/${penalty.id}/pay`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          payment_confirmed: true,
+        }),
+      })
+
+      if (
+        data.penalty?.paid !== true ||
+        Number(data.penalty.penalty_id) !== Number(penalty.id)
+      ) {
+        throw new Error('Refresh the page to verify the payment')
+      }
+
+      setPenalties((current) =>
+        current.map((item) =>
+          item.id === penalty.id
+            ? { ...item, paid: true }
+            : item
+        )
+      )
+
+      setMessage('Penalty payment recorded successfully.')
+    } catch (err) {
+      setError(
+        `${err.message || 'Payment failed.'} Refresh before retrying.`
+      )
+    } finally {
+      setPayingId(null)
+    }
+  }
 
   return (
     <main className="penalties-page">
@@ -50,6 +100,8 @@ function PenaltiesPage() {
 
       <h1>Penalties</h1>
       <p>View your library penalties.</p>
+
+      {message && <p role="status">{message}</p>}
 
       {loading && <p role="status">Loading penalties...</p>}
       {error && <p role="alert">{error}</p>}
@@ -66,6 +118,7 @@ function PenaltiesPage() {
                   <th>Amount</th>
                   <th>Days Late</th>
                   <th>Status</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -74,8 +127,22 @@ function PenaltiesPage() {
                     <td>{penalty.book_title}</td>
                     <td>{penalty.amount}</td>
                     <td>{penalty.days_late}</td>
+
                     <td>
                       {penalty.paid ? 'Paid' : 'Unpaid'}
+                    </td>
+                    <td>
+                      {!penalty.paid && (
+                        <button
+                          type="button"
+                          onClick={() => handlePay(penalty)}
+                          disabled={payingId !== null}
+                        >
+                          {payingId === penalty.id
+                            ? 'Processing...'
+                            : 'Pay Penalty'}
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
