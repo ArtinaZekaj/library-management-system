@@ -8,6 +8,7 @@ import StudentDashboard from './pages/StudentDashboard'
 import BooksPage from './pages/BooksPage'
 import MyLoansPage from './pages/MyLoansPage'
 import PenaltiesPage from './pages/PenaltiesPage'
+import NotificationsPage from './pages/NotificationsPage'
 
 function Dashboard() {
   const { user, logout } = useAuth()
@@ -95,6 +96,14 @@ function App() {
         }
       />
 
+      <Route
+        path="/student/notifications"
+        element={
+          <ProtectedRoute allowedRoles={['student']}>
+            <NotificationsPage />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<h1>Page Not Found</h1>} />
     </Routes>
   )
