@@ -9,6 +9,7 @@ import BooksPage from './pages/BooksPage'
 import MyLoansPage from './pages/MyLoansPage'
 import PenaltiesPage from './pages/PenaltiesPage'
 import NotificationsPage from './pages/NotificationsPage'
+import OperatorDashboard from './pages/OperatorDashboard'
 
 function Dashboard() {
   const { user, logout } = useAuth()
@@ -18,6 +19,10 @@ function Dashboard() {
 
   if (user?.role === 'student') {
     return <Navigate to="/student/dashboard" replace />
+  }
+
+  if (user?.role === 'operator') {
+    return <Navigate to="/operator/dashboard" replace />
   }
 
   const handleLogout = async () => {
@@ -101,6 +106,15 @@ function App() {
         element={
           <ProtectedRoute allowedRoles={['student']}>
             <NotificationsPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/operator/dashboard"
+        element={
+          <ProtectedRoute allowedRoles={['operator']}>
+            <OperatorDashboard />
           </ProtectedRoute>
         }
       />
