@@ -41,8 +41,8 @@ RUN apt-get install --yes libicu-dev \
 ## MySQL PDO support
 # RUN docker-php-ext-install pdo_mysql
 ## PostgreSQL PDO support
-# RUN apt-get install --yes libpq-dev \
-#     && docker-php-ext-install pdo_pgsql
+RUN apt-get install --yes libpq-dev \
+    && docker-php-ext-install pdo_pgsql
 ###
 ## laminas/laminas-cache supported extensions
 ###
@@ -66,3 +66,17 @@ RUN apt-get install --yes libicu-dev \
 
 
 WORKDIR /var/www
+
+COPY . /var/www
+
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+RUN printf '<Directory /var/www/public>\nAllowOverride All\nRequire all granted\n</Directory>\n' > /etc/apache2/conf-available/laminas.conf \
+    && a2enconf laminas
+
+RUN mkdir -p data/cache data/DoctrineORMModule/Proxy \
+    && chown -R www-data:www-data data
+
+EXPOSE 80
+
+CMD ["apache2-foreground"]

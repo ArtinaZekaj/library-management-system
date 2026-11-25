@@ -1,0 +1,12 @@
+.git
+vendor/
+.phpunit.cache/
+.phpcs-cache
+.psalm-cache/
+.env
+.env.*
+config/autoload/*.local.php
+config/autoload/local.php
+config/development.config.php
+data/cache/
+data/DoctrineORMModule/
